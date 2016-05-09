@@ -1,11 +1,10 @@
-import models.{Egg, Tamagotchi}
+import models.Egg
 import game.GameDriver._
 import game.InputProviders._
 import game.OutputProviders._
 import cats._
 import cats.implicits._
 import cats.data.Xor._
-import game.Input
 import util.RequestNonLinearExitException
 
 
