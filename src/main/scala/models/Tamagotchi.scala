@@ -47,12 +47,12 @@ object Tamagotchi {
       increasePoop _ |+|
       increaseSleepiness _ |+|
       increaseBoredom _ |+|
+      checkEvolution _ |+|
       checkDeath(maxHunger)(maxPoop)(maxBoredom) |+|
-      haveNap(maxEnergy) |+|
-      checkEvolution _ )(t)
+      haveNap(maxEnergy))(t)
   }
 
-  protected def checkDeath(maxHunger: Int)(maxPoop: Int)(maxBoredom: Int)(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def checkDeath(maxHunger: Int)(maxPoop: Int)(maxBoredom: Int)(t: Tamagotchi): Tamagotchi = t match {
     case t: Adult  =>
       val tooOld = t.age > t.maxAge
       val tooHungry = t.hunger > maxHunger
@@ -68,22 +68,22 @@ object Tamagotchi {
     case _ => t
   }
 
-  protected def increaseSleepiness(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def increaseSleepiness(t: Tamagotchi): Tamagotchi = t match {
     case t: Adult => t.copy(energy = t.energy - 1 )
     case _ => t
   }
 
-  protected def increaseHunger(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def increaseHunger(t: Tamagotchi): Tamagotchi = t match {
     case t: Adult => t.copy(hunger = t.hunger + Species.speciesHungerGrowth(t.species))
     case _ => t
   }
 
-  protected def increasePoop(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def increasePoop(t: Tamagotchi): Tamagotchi = t match {
     case t: Adult => t.copy(poop = t.poop + Species.poopProductionRate(t.species))
     case _ => t
   }
 
-  protected def increaseBoredom(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def increaseBoredom(t: Tamagotchi): Tamagotchi = t match {
     case t: Adult => t.copy(boredom = t.boredom + Species.boredomProductionRate(t.species))
     case _ => t
   }
@@ -92,7 +92,7 @@ object Tamagotchi {
     * Tamagotchi can evolve under specific circumstances. This mutates their species field.
     * Only adult unevolved tamagotchi can evolve
     */
-  protected def checkEvolution(t: Tamagotchi): Tamagotchi =
+  protected[models] def checkEvolution(t: Tamagotchi): Tamagotchi =
     t match {
       case t: Adult if t.species == Basic =>
         t match {
@@ -107,7 +107,7 @@ object Tamagotchi {
     }
 
 
-  protected def checkLifecycle(maxAge: Int)(t: Tamagotchi): Tamagotchi = t match {
+  protected[models] def checkLifecycle(maxAge: Int)(t: Tamagotchi): Tamagotchi = t match {
     case t: Egg if t.age >= 20 => Adult(t.name, 0, Basic, 0, maxAge, 0, 0, 20, awake = true)
     case t: Egg => t.copy(age = t.age + 1)
     case t: Adult => t.copy(age = t.age + 1)
