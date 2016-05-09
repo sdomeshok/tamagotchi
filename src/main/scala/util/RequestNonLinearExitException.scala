@@ -1,3 +1,3 @@
 package util
 
-class RequestNonLinearExitException extends Exception {}
+class RequestNonLinearExitException extends Exception

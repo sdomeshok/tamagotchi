@@ -2,7 +2,6 @@ import models.Egg
 import game.GameDriver._
 import game.InputProviders._
 import game.OutputProviders._
-import game.{Clean, Exit, Feed, Play}
 import cats._
 import cats.implicits._
 import cats.data.Xor._
@@ -34,22 +33,16 @@ object TamagotchiMain {
 
 
       case Array("preloaded") =>
-        val commands = (Seq.fill(20)(Clean) ++ // skip egg phase
-          Seq.fill(20)(Seq(Clean, Feed, Play)).flatten // try to keep tamagotchi alive
-          ++ Seq(Exit))
-          .map(_.some)
-          .iterator
-
-        (commands.next _, neatStatePrinter _)
+        (getPreloadedProvider, neatStatePrinter _)
 
 
       case _ =>
         (turnBasedWaitForInput _, neatStatePrinter _)
     }
 
-    interpretateWithState[models.Tamagotchi, Option[game.Input]](Egg("Baby", 0), inFunc, println, doGameTurn)
+    interpretateWithState(Egg("Baby", 0), inFunc, println, doGameTurn)
   } catch {
-    case ex: NotImplementedError => {
+    case ex: RequestNonLinearExitException => {
       println("Exiting.")
       System.exit(0)
     }

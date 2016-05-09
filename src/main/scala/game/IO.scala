@@ -6,6 +6,7 @@ import cats._
 import cats.implicits._
 import cats.std.all._
 import cats.data._
+import util.RequestNonLinearExitException
 
 import scala.io.StdIn.readLine
 import scala.io.{Codec, Source}
@@ -23,8 +24,22 @@ object InputProviders {
       () => try {
         decodeInputs(lines.next())
       } catch {
-       case NonFatal(ex) => ???
+       case NonFatal(ex) => throw new RequestNonLinearExitException
       }
+    }
+  }
+
+  def getPreloadedProvider: () => Option[Input] = {
+    val commands = (Seq.fill(20)(Clean) ++ // skip egg phase
+      Seq.fill(20)(Seq(Clean, Feed, Play)).flatten // try to keep tamagotchi alive
+      ++ Seq(Exit))
+      .map(_.some)
+      .iterator
+
+    () => try {
+      commands.next()
+    } catch {
+      case NonFatal(ex) => throw new RequestNonLinearExitException
     }
   }
 
