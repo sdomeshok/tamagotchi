@@ -32,14 +32,14 @@ transition leaves them craving flesh; Dragons, who fly around with the enregy of
 Find out how to unlock each species on your own! Or cheat and read the code. Cheater. Evolutions are not just cosmetic! Each evolution changes the consumption rate of the various resources. Some evolutions are very hard to keep alive or very hard to reach on the default settings, but all are possible!
 
 ## Commands
-The game can take inputs and outputs in various ways. Supported inputs are realtime, turnbased and batch read from a file. Supported output
+The game can take inputs and outputs in various ways. Supported inputs are realtime, turnbased and batch read from a file. There is also a testing mode that allows compilation of command sequences into the binary. Supported output
 formats are naive, which prints raw data structures mostly for debugging and and the neat printer which gives a much more interesting
 description of the game.
 
 The simplest way to run the game with default settings is to just hit `sbt run`. This will run the game in turn based pretty printed mode.
 To specify input and output modes, you can add options to the command line. `sbt run auto naive` will run the game in real time with
 the naive printer. `sbt run manual pretty` will run the turn based pretty printer. Options can be mixed and matched. To invoke the
-file reader, call `sbt file <name>` where name is a valid file path where each line is a command of `{sleep, feed, clean, play, exit}`.
+file reader, call `sbt run file <name>` where name is a valid file path where each line is a command of `{sleep, feed, clean, play, exit}`. Finally, to run the test sequence, call `sbt run preloaded`.
 
 ## Tests
 Please excuse the stubbed tests, it would have taken about as much time as I spent on this once over to really bring the tests up to the level that
