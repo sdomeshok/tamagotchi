@@ -1,10 +1,11 @@
-import models.Egg
+import models.{Egg, Tamagotchi}
 import game.GameDriver._
 import game.InputProviders._
 import game.OutputProviders._
 import cats._
 import cats.implicits._
 import cats.data.Xor._
+import game.Input
 import util.RequestNonLinearExitException
 
 
@@ -21,7 +22,7 @@ object TamagotchiMain {
             throw new RequestNonLinearExitException
 
           case Right(fun) =>
-            (fun, turnBasedWaitForInput _)
+            (fun, neatStatePrinter _)
         }
       }
 
@@ -40,7 +41,7 @@ object TamagotchiMain {
         (turnBasedWaitForInput _, neatStatePrinter _)
     }
 
-    interpretateWithState(Egg("Baby", 0), inFunc, println, doGameTurn)
+    interpretateWithState(Egg("Baby", 0), inFunc, outFunc, doGameTurn)
   } catch {
     case ex: RequestNonLinearExitException => {
       println("Exiting.")
