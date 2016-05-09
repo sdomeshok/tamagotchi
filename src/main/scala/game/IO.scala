@@ -1,7 +1,7 @@
 package game
 import java.io.{BufferedReader, InputStreamReader}
 
-import models.{Adult, Dead, Egg, Tamagotchi}
+import models._
 import cats._
 import cats.implicits._
 import cats.std.all._
@@ -69,6 +69,7 @@ object InputProviders {
 
   /**
     * Map inputs from text to internal action types
+    *
     * @param input A string representing what may be a valid command
     * @return An instance of Some[Input] if the textual input was valid, otherwise None
     */
@@ -86,6 +87,7 @@ object OutputProviders {
 
   /**
     * Debugging output provider. Simply prints the raw state at each tick
+    *
     * @param t The current tamagotchi state
     */
   def naiveStatePrinter(t: Tamagotchi): Unit = println(t)
@@ -100,7 +102,7 @@ object OutputProviders {
   def neatStatePrinter(t: Tamagotchi): Unit = {
     val message = t match {
       case t: Egg => handleEgg(t)
-      case t: Adult => t.toString
+      case t: Adult => handleAdult(10)(10)(10)(t)
       case t: Dead => handleDead(t)
     }
 
@@ -113,6 +115,69 @@ object OutputProviders {
       case _ if e.age > 10 && e.age <= 15 => "Your egg gently rocks in place."
       case _ if e.age > 15 => "Your egg looks ready to hatch!"
     }
+  }
+
+  protected[game] def handleAdult(maxHunger: Int = 10)(maxPoop: Int = 10)(maxBoredom: Int = 10)(a: Adult): String = {
+    def handleHungry(a: Adult): Option[String] = {
+      if (a.hunger + Species.speciesHungerGrowth(a.species) >= maxHunger) {
+        s"${a.name} is ravenous!".some
+      } else if (a.hunger + 3 * Species.speciesHungerGrowth(a.species ) >= maxHunger) {
+        s"${a.name} looks hungry.".some
+      } else {
+        none
+      }
+    }
+
+    def handlePoopy(a: Adult): Option[String] = {
+      if (a.poop + Species.poopProductionRate(a.species) >= maxPoop) {
+        s"${a.name} is drowning in filth!".some
+      } else if (a.poop + 3 * Species.poopProductionRate(a.species ) >= maxPoop) {
+        s"${a.name} looks like it could use a clean.".some
+      } else {
+        none
+      }
+    }
+
+    def handleTired(a: Adult): Option[String] = {
+      if (a.energy <= 0 || !a.awake) {
+        s"${a.name} is napping.".some
+      } else if (a.energy <= 5) {
+        s"${a.name} is letting out an occasional yawn.".some
+      } else if (a.energy >= 15) {
+        s"${a.name} is bright and perky.".some
+      } else {
+        none
+      }
+    }
+
+    def handleBored(a: Adult): Option[String] = {
+      if (a.boredom + Species.boredomProductionRate(a.species) >= maxBoredom) {
+        s"${a.name} is climbing up the walls in frustration!".some
+      } else if (a.boredom + 3 * Species.boredomProductionRate(a.species ) >= maxBoredom) {
+        s"${a.name} is circling around looking for a toy.".some
+      } else {
+        none
+      }
+    }
+
+    def handleOld(a: Adult): Option[String] = {
+      if (a.age > a.maxAge - 10) {
+        s"${a.name} is looking a little long in the tooth.".some
+      } else if (a.age > a.maxAge - 5) {
+        s"${a.name} certainly has more gray hair.".some
+      } else if (a.age > a.maxAge - 2) {
+        s"${a.name} has looked healthier.".some
+      }else {
+        none
+      }
+    }
+
+    val base = s"${a.name} is a ${a.species}. It is ${a.age} ticks old.\n"
+    base + Seq(handleHungry _, handlePoopy _, handleTired _, handleBored _, handleOld _)
+      .map (f => f(a))
+      .filter(_.nonEmpty)
+      .map(_.get)
+      .mkString("\n") + "\n"
   }
 
   protected def handleDead(d: Dead): String = {
