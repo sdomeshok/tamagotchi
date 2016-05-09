@@ -36,6 +36,7 @@ class TamagotchiSpec extends FreeSpec {
 
   "Correctly handle ages and life phases" - {
     val e = Egg("Egg", 0)
+    val d = Dead("d", Basic, 10)
 
     "Increase and egg's age if has not matured" in {
       Tamagotchi.checkLifecycle(10)(e) should equal (Egg("Egg", 1))
@@ -49,6 +50,11 @@ class TamagotchiSpec extends FreeSpec {
     "Increase an adult's age" in {
       val a = Adult("adult", species = Basic, age = 3)
       Tamagotchi.checkLifecycle(10)(a).asInstanceOf[Adult].age should equal (4)
+    }
+
+    "Dead invividuals stop aging" in {
+      Tamagotchi.checkLifecycle(5)(d).asInstanceOf[Dead].age should equal (10)
+
     }
 
   }
