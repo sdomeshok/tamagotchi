@@ -2,6 +2,7 @@ package game
 
 import models.Tamagotchi._
 import models.{Adult, Tamagotchi}
+import util.RequestNonLinearExitException
 
 import scala.annotation.tailrec
 
@@ -12,14 +13,14 @@ object GameDriver {
     val updatedState = state match {
       case t: Adult if t.awake =>
         input.fold (state) {
-          case Exit => ???
+          case Exit => throw new RequestNonLinearExitException
           case Feed => Tamagotchi.feed(t)
           case Clean => Tamagotchi.clean(t)
           case Play => Tamagotchi.play(t)
           case Sleep => Tamagotchi.sleep()(t)
         }
 
-      case _ if input contains Exit => ???
+      case _ if input contains Exit => throw new RequestNonLinearExitException
       case _ => state
     }
 

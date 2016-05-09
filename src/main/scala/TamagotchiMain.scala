@@ -2,11 +2,11 @@ import models.Egg
 import game.GameDriver._
 import game.InputProviders._
 import game.OutputProviders._
-import game.{Clean, Feed, Play, Exit}
-
+import game.{Clean, Exit, Feed, Play}
 import cats._
 import cats.implicits._
 import cats.data.Xor._
+import util.RequestNonLinearExitException
 
 
 object TamagotchiMain {
@@ -18,7 +18,9 @@ object TamagotchiMain {
           case Left(ex) =>
             println(ex.getMessage)
             System.exit(1)
-            ??? // This branch is non-returning, throw an exception so that we can still typecheck
+            // This branch is non-returning, throw an exception so that we can still typecheck
+            throw new RequestNonLinearExitException
+
           case Right(fun) =>
             (fun, turnBasedWaitForInput _)
         }
